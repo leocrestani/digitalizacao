@@ -10,7 +10,7 @@ st.title("Dashboard de Visão de Máquinas")
 
 data = pd.read_csv('smart_manufacturing_data.csv')
 
-aba1, aba2, aba3, aba4 = st.tabs(["Visão Geral", "Status das máquinas", "Correlação entre Features", "Análise de Anomalias"])
+aba1, aba2, aba3, aba4, aba5 = st.tabs(["Visão Geral", "Status das máquinas", "Correlação entre Features", "Análise de Anomalias", "Análise de Falhas"])
 
 with aba1:
     st.header("Visão Geral")
@@ -66,3 +66,14 @@ with aba4:
                                 title="Anomalias Detectadas por Máquina",
                                 labels={"timestamp": "Timestamp", "temperature": "Temperatura", "machine": "Máquina"})
     st.plotly_chart(fig_anomalies, use_container_width=True)
+
+with aba5:
+    st.header("Análise de Falhas")
+    data_falha = data[data['failure_type'] != "Normal"]
+    failure_counts = data_falha['failure_type'].value_counts()
+    fig_failures = px.bar(failure_counts, x=failure_counts.index, y=failure_counts.values,
+                          title="Tipos de Falhas por Máquina",
+                          labels={"failure_type": "Tipo de Falha", "value": "Contagem"},
+                          color_discrete_sequence=px.colors.qualitative.Dark2)
+    fig_failures.update_layout(xaxis_title="Tipo de Falha", yaxis_title="Contagem")
+    st.plotly_chart(fig_failures, use_container_width=True)
