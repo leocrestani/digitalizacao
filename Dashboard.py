@@ -17,6 +17,7 @@ with st.sidebar.expander("Filtros de Data"):
     data_inicio = data['timestamp'].min()
     data_fim = data['timestamp'].max()
     selected_dates = st.sidebar.date_input("Selecione o intervalo de datas", [data_inicio, data_fim], min_value=data_inicio, max_value=data_fim)
+    data = data[(data['timestamp'] >= pd.to_datetime(selected_dates[0])) & (data['timestamp'] <= pd.to_datetime(selected_dates[1]))]
 
 with st.sidebar.expander("Filtros de Status da Máquina"): 
     status_maquinas = data['machine_status'].unique()
@@ -26,6 +27,7 @@ with st.sidebar.expander("Filtros de Status da Máquina"):
 with st.sidebar.expander("Configurações Avançadas"):
     show_anomalies = st.checkbox("Exibir Anomalias", value=True)
     show_failures = st.checkbox("Exibir Falhas", value=True)
+    data = data[data['anomaly_flag'] == "Yes"] if show_anomalies else data
 
 aba1, aba2, aba3, aba4, aba5 = st.tabs(["Visão Geral", "Status das máquinas", "Correlação entre Features", "Análise de Anomalias", "Análise de Falhas"])
 
