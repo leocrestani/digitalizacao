@@ -10,7 +10,7 @@ st.title("Dashboard de Visão de Máquinas")
 
 data = pd.read_csv('smart_manufacturing_data.csv')
 
-aba1, aba2, aba3 = st.tabs(["Visão Geral", "Aba2", "Aba3"])
+aba1, aba2, aba3 = st.tabs(["Visão Geral", "Status das máquinas", "Aba3"])
 
 with aba1:
     st.header("Visão Geral")
@@ -37,7 +37,14 @@ with aba1:
     st.plotly_chart(fig_pres, use_container_width=True)
 
 with aba2:
-    st.header("Aba2")
+    st.header("Status das máquinas")
+    status_counts = data['machine_status'].value_counts(normalize=True) * 100
+    fig_status = px.pie(status_counts, values=status_counts.values, names=status_counts.index, 
+                        title="Percentual dos Status das Máquinas",
+                        labels={"machine_status": "Status", "value": "Percentual"},
+                        color_discrete_sequence=px.colors.qualitative.Pastel)
+    fig_status.update_traces(textinfo='percent+label')
+    st.plotly_chart(fig_status, use_container_width=True)
 
 with aba3:
     st.header("Aba3")
