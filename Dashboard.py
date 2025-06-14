@@ -10,6 +10,23 @@ st.title("Dashboard de Visão de Máquinas")
 
 data = pd.read_csv('smart_manufacturing_data.csv')
 
+st.sidebar.title('Filtros')
+with st.sidebar.expander("Filtros de Data"):
+    data['timestamp'] = pd.to_datetime(data['timestamp'])
+    data = data.sort_values(by='timestamp')
+    data_inicio = data['timestamp'].min()
+    data_fim = data['timestamp'].max()
+    selected_dates = st.sidebar.date_input("Selecione o intervalo de datas", [data_inicio, data_fim], min_value=data_inicio, max_value=data_fim)
+
+with st.sidebar.expander("Filtros de Status da Máquina"): 
+    status_maquinas = data['machine_status'].unique()
+    selected_status = st.sidebar.multiselect('Selecione os Status das Máquinas', status_maquinas, default=status_maquinas)
+    data = data[data['machine_status'].isin(selected_status)]
+
+with st.sidebar.expander("Configurações Avançadas"):
+    show_anomalies = st.checkbox("Exibir Anomalias", value=True)
+    show_failures = st.checkbox("Exibir Falhas", value=True)
+
 aba1, aba2, aba3, aba4, aba5 = st.tabs(["Visão Geral", "Status das máquinas", "Correlação entre Features", "Análise de Anomalias", "Análise de Falhas"])
 
 with aba1:
