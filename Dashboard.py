@@ -10,7 +10,7 @@ st.title("Dashboard de Visão de Máquinas")
 
 data = pd.read_csv('smart_manufacturing_data.csv')
 
-aba1, aba2, aba3 = st.tabs(["Visão Geral", "Status das máquinas", "Aba3"])
+aba1, aba2, aba3 = st.tabs(["Visão Geral", "Status das máquinas", "Correlação entre Features"])
 
 with aba1:
     st.header("Visão Geral")
@@ -47,4 +47,14 @@ with aba2:
     st.plotly_chart(fig_status, use_container_width=True)
 
 with aba3:
-    st.header("Aba3")
+    st.header("Correlação entre Features")
+    data['timestamp'] = pd.to_datetime(data['timestamp'])
+    data['timestamp'] = data['timestamp'].astype(int) / 10**9
+    features = ["timestamp", "temperature", "vibration", "humidity", "pressure", "energy_consumption", "predicted_remaining_life", "downtime_risk"]
+    data = data[features]
+    data = data.dropna() 
+    corr = data.corr(method='pearson')
+    fig_corr = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu_r',
+                         title="Correlação entre Features")
+    fig_corr.update_layout(xaxis_title="Features", yaxis_title="Features")
+    st.plotly_chart(fig_corr, use_container_width=True)
